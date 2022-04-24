@@ -15,7 +15,7 @@ SHOP_ID = 506751
 SHOP_ARTICLE_ID = 538350
 
 # webhook settings
-WEBHOOK_HOST = 'https://0177-91-108-1-90.ngrok.io'
+WEBHOOK_HOST = 'https://62.113.107.163'
 WEBHOOK_PATH = '/userBot/handler.py'
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
