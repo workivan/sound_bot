@@ -1,3 +1,4 @@
+import datetime
 import re
 from datetime import date
 from distutils.util import strtobool
@@ -281,7 +282,7 @@ async def process_successful_payment(message: types.Message):
         await send_file(message.chat.id, pack)
         await config.bot.send_message(
             message.chat.id,
-            msg.PAYMENT_PACK_SUCCESS + f' {pmnt.get("invoice_payload")}'
+            msg.PAYMENT_PACK_SUCCESS
         )
         await config.bot.send_message(
             message.chat.id,
@@ -289,8 +290,12 @@ async def process_successful_payment(message: types.Message):
         )
         return
     user = await config.storage.get_user(message.chat.id)
-    await config.storage.update_sub(message.chat.id, period,
-                                    user.subscription_to if user.subscription_to else 'CURRENT_DATE')
+
+    subscription = user.subscription_to if user.subscription_to and user.subscription_to > date.today() else date.today()
+    await config.storage.update_sub(
+        message.chat.id,
+        subscription + datetime.timedelta(days=period)
+    )
     await config.bot.send_message(
         message.chat.id,
         msg.PAYMENT_SUCCESFULL + f' {pmnt.get("invoice_payload")}'

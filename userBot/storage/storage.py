@@ -12,9 +12,9 @@ class Storage:
     async def init(self, db_url):
         self.connection = await asyncpg.connect(db_url)
 
-    async def update_sub(self, chat_id, period, now='CURRENT_DATE'):
+    async def update_sub(self, chat_id, to='CURRENT_DATE'):
         await self.connection.execute(
-            f"""update "user" set subscription_to={now} + {period} where chat_id={chat_id}""")
+            f"""update "user" set subscription_to='{to}' where chat_id={chat_id}""")
 
     async def get_user(self, chat_id):
         row = await self.connection.fetchrow(f"""select * from "user" where chat_id={chat_id}""")
