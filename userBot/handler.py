@@ -41,6 +41,7 @@ async def get_account_menu(message: types.Message):
 @dp.message_handler(lambda message: message.text and message.text == bt.AccountButtons.REF)
 async def get_ref(message: types.Message):
     user = await config.storage.get_user(message.chat.id)
+    await send_message_to_u(message.chat.id, msg.REF_MESSAGE, None)
     await send_message_to_u(message.chat.id, config.TELEGRAM_REF + user.username, None)
 
 
@@ -85,7 +86,7 @@ async def get_subscribes(message):
     user = await config.storage.get_user(message.chat.id)
     await config.bot.send_message(
         message.chat.id,
-        msg.PAYMENT_MESSAGE + f'\n{Payments.current_sub_info(user)}',
+        f'\n{Payments.current_sub_info(user)}' + msg.PAYMENT_MESSAGE,
         reply_markup=kb.AccountMenu.get_pay()
     )
 
@@ -117,6 +118,20 @@ async def replies_handler(message: types.Message, state):
     # ответ на звуки
     if replied_message_text.endswith('.wav'):
         chat_id = message.chat.id
+
+        user = await config.storage.get_user(chat_id)
+
+        if not user.is_connected:
+            await config.bot.send_message(
+                message.chat.id,
+                msg.NOT_SUB + '\n' + '',
+            )
+            await config.bot.send_message(
+                message.chat.id,
+                'https://telegram.me/sound_market_echo_dev_bot'
+            )
+            return
+
         user = await config.storage.get_user(chat_id)
         if user.subscription_to is not None and user.subscription_to > date.today():
             await reply_for_sounds(message, replied_message_text)
@@ -134,6 +149,20 @@ async def replies_handler(message: types.Message, state):
 @dp.callback_query_handler(lambda cq: cq.data and cq.data.startswith(PacksCallback.DOWNLOAD))
 async def callback_handler_download(callback_query: types.CallbackQuery):
     chat_id = callback_query.from_user.id
+
+    user = await config.storage.get_user(chat_id)
+
+    if not user.is_connected:
+        await config.bot.send_message(
+            callback_query.message.chat.id,
+            msg.NOT_SUB + '\n' + '',
+        )
+        await config.bot.send_message(
+            callback_query.message.chat.id,
+            'https://telegram.me/sound_market_echo_dev_bot'
+        )
+        return
+
     args = callback_query.data.split(',')
     bought = False
     if len(args) == 3:
@@ -185,10 +214,11 @@ async def callback_handler_download(callback_query: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data == PaymentCallback.MONTH)
 async def get_price1(callback_query: types.CallbackQuery):
+    user = await config.storage.get_user(callback_query.from_user.id)
     await config.bot.send_invoice(
         callback_query.message.chat.id,
         title=msg.PAYMENT_TITLE_MESSAGE + ' ' + callback_query.data,
-        description=msg.PAYMENT_BODY_MESSAGE,
+        description=msg.PAYMENT_BODY_MESSAGE(user.subscription_to, 30),
         provider_token=config.API_PAY_TOKEN,
         currency='rub',
         is_flexible=False,
@@ -200,10 +230,11 @@ async def get_price1(callback_query: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data == PaymentCallback.TH_MONTH)
 async def get_price3(callback_query: types.CallbackQuery):
+    user = await config.storage.get_user(callback_query.from_user.id)
     await config.bot.send_invoice(
         callback_query.message.chat.id,
         title=msg.PAYMENT_TITLE_MESSAGE + ' ' + callback_query.data,
-        description=msg.PAYMENT_BODY_MESSAGE_1,
+        description=msg.PAYMENT_BODY_MESSAGE(user.subscription_to, 90),
         provider_token=config.API_PAY_TOKEN,
         currency='rub',
         is_flexible=False,
@@ -215,10 +246,11 @@ async def get_price3(callback_query: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data == PaymentCallback.YEAR)
 async def get_price2(callback_query: types.CallbackQuery):
+    user = await config.storage.get_user(callback_query.from_user.id)
     await config.bot.send_invoice(
         callback_query.message.chat.id,
         title=msg.PAYMENT_TITLE_MESSAGE + ' ' + callback_query.data,
-        description=msg.PAYMENT_BODY_MESSAGE_2,
+        description=msg.PAYMENT_BODY_MESSAGE(user.subscription_to, 360),
         provider_token=config.API_PAY_TOKEN,
         currency='rub',
         is_flexible=False,

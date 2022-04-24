@@ -41,6 +41,7 @@ def lambda_sound(message):
             message.text[:-1] == bt.MelodiesButtons.VOCALS or
             message.text[:-1] == bt.MelodiesButtons.SAMPLES or
             message.text[:-1] == bt.MelodiesButtons.STRINGS or
+            message.text == bt.MelodiesButtons.MORE or
             message.text[:-1] == bt.DrumsButtons.KICKS or
             message.text[:-1] == bt.DrumsButtons.SNARES or
             message.text[:-1] == bt.DrumsButtons.HATS or
@@ -70,3 +71,6 @@ def parse_name_fr_menu(menu, pack_id):
         args = row.split(')')
         if int(args[0]) == pack_id:
             return args[1]
+
+def change_date_format(dt):
+    return re.sub(r'(\d{4})-(\d{1,2})-(\d{1,2})', '\\3-\\2-\\1', str(dt))

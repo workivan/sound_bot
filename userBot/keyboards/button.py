@@ -8,7 +8,7 @@ class MenuButtons:
 
 class CommonButtons:
     BACK_TO_MENU = 'Вернуться в главное меню'
-    BACK_TO_SOUNDS = 'Вернуться к первому фильтру'
+    BACK_TO_SOUNDS = 'Вернуться'
 
 
 class PacksMenuButtons:
@@ -17,7 +17,7 @@ class PacksMenuButtons:
     MORE = 'Следующие 25 паков'
     PACKS = 'Вернуться к списку паков'
     FILTRED = 'Показать новые паки'
-    BUY = 'Оплатить пак'
+    BUY = 'Заплатить за пак'
 
 
 class SoundsMenuButtons:
@@ -35,7 +35,7 @@ class DrumsButtons:
     FX = 'Fx'
     BASS = 'Bass'
     LOOPS = 'Loop'
-    MORE = 'More'
+    MORE = 'More drums'
 
 class PaymentKeyboard:
     MONTH = '1 месяц'
@@ -49,7 +49,7 @@ class MelodiesButtons:
     VOCALS = 'Vocal'
     SAMPLES = 'Sample'
     STRINGS = 'String'
-    MORE = 'More'
+    MORE = 'More melodies'
 
 
 class GenresButtons:
@@ -63,7 +63,7 @@ class GenresButtons:
 
 
 class AccountButtons:
-    REF = 'Твоя рефельральная ссылка'
+    REF = 'Реферальная ссылка'
     ACC = 'Подписка'
 
 

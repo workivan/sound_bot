@@ -50,7 +50,9 @@ def get_genre(file_name):
         return 'pop'
     if ('dancehall' or 'afro') in file_name:
         return 'dancehall/afro'
-    return 'more'
+    if 'melody' in file_name:
+        return 'more melodies'
+    return 'more drums'
 
 
 def upload_sounds_from_pack(pack, cur):

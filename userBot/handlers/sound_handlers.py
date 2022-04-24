@@ -37,11 +37,6 @@ async def get_sound_by_type(message, fr=0, sound_type=None):
                 reply_markup=SoundsKeyboard.get_more(fr + config.QUERY_SOUNDS_LIMIT, type_id)
             )
             return
-        else:
-            await config.bot.send_message(
-                message.chat.id,
-                msg.FINISH_SOUNDS
-            )
     else:
         await config.bot.send_message(
             message.chat.id,
