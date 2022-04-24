@@ -8,7 +8,6 @@ attrs==21.4.0
 Babel==2.9.1
 billiard==3.6.4.0
 blinker==1.4
-Brl-api==0.7.0
 celery==5.2.6
 certifi==2021.10.8
 cffi==1.15.0
