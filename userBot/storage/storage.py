@@ -42,6 +42,7 @@ class Storage:
             f"""select * from "payment" where chat_id={int(chat_id)} and product='{product}'""")
         if row:
             return Payment(row)
+        return None
 
     async def get_pack_with_id(self, pack_id, order):
         row = await self.connection.fetchrow(
