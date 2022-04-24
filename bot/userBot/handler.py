@@ -6,18 +6,16 @@ from aiogram import types, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import ContentType
 
-from userBot import config
-from userBot.handlers.pack_handlers import pack_by_genre_handler, pack_by_menu, reply_for_packs, exclusive_packs
-from userBot.handlers.payment_handlers import Payments
-from userBot.handlers.sound_handlers import get_sound_by_type, reply_for_sounds
-from userBot.handlers.utils import send_message_to_u, lambda_for_packs_genres, lambda_for_sounds, to_sounds_filter, \
+from bot.userBot import config
+from bot.userBot.handlers.pack_handlers import pack_by_genre_handler, pack_by_menu, reply_for_packs, exclusive_packs
+from bot.userBot.handlers.payment_handlers import Payments
+from bot.userBot.handlers.sound_handlers import get_sound_by_type, reply_for_sounds
+from bot.userBot.handlers.utils import send_message_to_u, lambda_for_packs_genres, lambda_for_sounds, to_sounds_filter, \
     lambda_sound
-from userBot.keyboards import button as bt
-from userBot.keyboards import keyboard as kb
-from userBot.keyboards import message as msg
-from userBot.keyboards.callback import PacksCallback, SoundCallback, PaymentCallback
-from userBot.middleware import AuthMiddleware
-from userBot.services.delay_service import send_file
+from bot.userBot.keyboards import button as bt, keyboard as kb, message as msg
+from bot.userBot.keyboards.callback import PacksCallback, SoundCallback, PaymentCallback
+from bot.userBot.middleware import AuthMiddleware
+from bot.userBot.services.delay_service import send_file
 
 dp = Dispatcher(config.bot, storage=MemoryStorage())
 dp.middleware.setup(AuthMiddleware())

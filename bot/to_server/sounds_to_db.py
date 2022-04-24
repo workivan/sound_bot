@@ -1,7 +1,7 @@
 import os
 import psycopg2
 
-from global_config import ROOT_DIR
+from bot.global_config import ROOT_DIR
 
 DB_USER = 'ikuzin'
 DB_NAME = 'sound_market'

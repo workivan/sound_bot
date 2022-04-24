@@ -6,9 +6,9 @@ from aiogram import Bot, Dispatcher
 
 from dotenv import load_dotenv
 
-from userBot import config
-from userBot.services.upload_service import Uploader
-from userBot.keyboards import message as msg
+from bot.userBot import config
+from bot.userBot.services.upload_service import Uploader
+from bot.userBot.keyboards import message as msg
 
 load_dotenv()
 

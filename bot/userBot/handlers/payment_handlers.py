@@ -1,6 +1,6 @@
 from aiogram import types
 
-from userBot.keyboards.labels import ONE_MONTH_LABEL, THREE_MONTH_LABEL, ONE_YEAR_LABEL, PACK_PAYMENT
+from bot.userBot.keyboards.labels import ONE_MONTH_LABEL, THREE_MONTH_LABEL, ONE_YEAR_LABEL, PACK_PAYMENT
 
 
 class Payments:

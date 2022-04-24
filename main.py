@@ -2,8 +2,7 @@ import requests
 
 from aiogram.utils.executor import start_webhook
 
-from userBot import config
-from userBot import handler
+from bot.userBot import config, handler
 
 
 async def on_startup(dp):

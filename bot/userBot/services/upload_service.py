@@ -2,7 +2,7 @@ import os
 import random
 import string
 
-from userBot import config
+from bot.userBot import config
 
 import soundfile as sf
 

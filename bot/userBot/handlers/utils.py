@@ -1,7 +1,7 @@
 import re
 
-from userBot import config
-from userBot.keyboards import button as bt
+from bot.userBot import config
+from bot.userBot.keyboards import button as bt
 
 
 async def send_message_to_u(chat_id, message, rp):

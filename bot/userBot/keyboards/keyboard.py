@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-from userBot.keyboards.button import MenuButtons, PacksMenuButtons, SoundsMenuButtons, CommonButtons, DrumsButtons, \
+from bot.userBot.keyboards.button import MenuButtons, PacksMenuButtons, SoundsMenuButtons, CommonButtons, DrumsButtons, \
     MelodiesButtons, AccountButtons, GenresButtons, MoreSoundsButtons, PaymentKeyboard
-from userBot.keyboards.callback import PacksCallback, SoundCallback, PaymentCallback
+from bot.userBot.keyboards.callback import PacksCallback, SoundCallback, PaymentCallback
 
 
 class MenuKeyboard:

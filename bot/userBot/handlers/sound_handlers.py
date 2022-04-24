@@ -1,11 +1,11 @@
 import shutil
 
-from userBot import config
-from userBot.keyboards.keyboard import SoundsKeyboard
-from userBot.services.delay_service import send_file
-from userBot.services.upload_service import Uploader
-from userBot.services.utils_service import Utils
-from userBot.keyboards import message as msg
+from bot.userBot import config
+from bot.userBot.keyboards.keyboard import SoundsKeyboard
+from bot.userBot.services.delay_service import send_file
+from bot.userBot.services.upload_service import Uploader
+from bot.userBot.services.utils_service import Utils
+from bot.userBot.keyboards import message as msg
 
 
 async def get_sound_by_type(message, fr=0, sound_type=None):
