@@ -103,10 +103,10 @@ async def reply_for_packs(message, reply_text, state):
             voice=open(ogg, 'rb')
         )
     pays = await config.storage.get_pay_by_user_and_product(message.chat.id, pack_name.strip())
-    if pays.chat_id is not None:
-        bought = True
-    else:
+    if pays is None:
         bought = False
+    else:
+        bought = True
 
     shutil.rmtree(temp_dir_files, ignore_errors=True)
     async with state.proxy() as proxy:
