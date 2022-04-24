@@ -2,9 +2,9 @@ from aiogram import types
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
-from bot.userBot import config
-from bot.userBot.keyboards import message as msg
-from bot.userBot.services.referral_service import ReferralService
+from userBot import config
+from userBot.keyboards import message as msg
+from userBot.services.referral_service import ReferralService
 
 
 class AuthMiddleware(BaseMiddleware):

@@ -3,8 +3,8 @@ import os
 from aiogram import Bot
 from dotenv import load_dotenv
 
-from bot.global_config import ROOT_DIR
-from bot.userBot.storage.storage import Storage
+from global_config import ROOT_DIR
+from userBot.storage.storage import Storage
 
 load_dotenv()
 
@@ -36,6 +36,6 @@ QUERY_LIMIT = 3
 QUERY_RATE_LIMIT = 10
 QUERY_SOUNDS_LIMIT = 3
 
-TMP_FILES_DIR = ROOT_DIR + "bot/upload/"
+TMP_FILES_DIR = ROOT_DIR + "/upload/"
 
 TELEGRAM_REF = 'https://telegram.me/?start='

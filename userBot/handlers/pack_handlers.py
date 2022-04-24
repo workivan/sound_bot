@@ -3,10 +3,10 @@ import shutil
 
 from typing import List
 
-from bot.userBot import config
-from bot.userBot.handlers.utils import parse_max_index, parse_name_fr_menu
-from bot.userBot.keyboards import keyboard as kb, message as msg
-from bot.userBot.services.upload_service import Uploader
+from userBot import config
+from userBot.handlers.utils import parse_max_index, parse_name_fr_menu
+from userBot.keyboards import message as msg, keyboard as kb
+from userBot.services.upload_service import Uploader
 
 
 async def pack_by_genre_handler(message, state, genre=None):

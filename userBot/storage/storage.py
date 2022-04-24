@@ -1,9 +1,9 @@
 import asyncpg
 
-from bot.userBot.storage.Pack import Pack
-from bot.userBot.storage.Payment import Payment
-from bot.userBot.storage.Sound import Sound
-from bot.userBot.storage.User import User
+from userBot.storage.Pack import Pack
+from userBot.storage.Payment import Payment
+from userBot.storage.Sound import Sound
+from userBot.storage.User import User
 
 
 class Storage:

@@ -1,7 +1,7 @@
 import os
 import psycopg2
 
-from bot.global_config import ROOT_DIR
+from global_config import ROOT_DIR
 
 DB_USER = 'ikuzin'
 DB_NAME = 'sound_market'
@@ -74,7 +74,7 @@ def upload_pack(pack, genre, pack_name, cur):
 
 if __name__ == "__main__":
     connection = psycopg2.connect("dbname='sound_market' user='ikuzin' host='localhost' password='Pabotahard1$'")
-
+    print("ok")
     cur = connection.cursor()
     for root, packs, _ in os.walk(ROOT_DIR + "/music"):
         for pack in packs:

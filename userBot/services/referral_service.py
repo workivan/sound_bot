@@ -1,4 +1,4 @@
-from bot.userBot import config
+from userBot import config
 
 
 class ReferralService:
