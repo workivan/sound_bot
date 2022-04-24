@@ -16,7 +16,7 @@ SHOP_ARTICLE_ID = 538350
 
 # webhook settings
 WEBHOOK_HOST = 'https://62.113.107.163'
-WEBHOOK_PATH = '/userBot/handler.py'
+WEBHOOK_PATH = ROOT_DIR + '/userBot/handler.py'
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 # webserver settings

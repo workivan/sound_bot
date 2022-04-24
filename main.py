@@ -30,7 +30,7 @@ def launch_user_bot():
 
 if __name__ == '__main__':
     isSet = requests.post(
-        f"https://api.telegram.org/{config.API_TOKEN_USER_BOT}/setwebhook?url={config.WEBHOOK_URL}"
+        f"https://api.telegram.org/bot{config.API_TOKEN_USER_BOT}/setwebhook?url={config.WEBHOOK_URL}"
     )
     launch_user_bot()
 
