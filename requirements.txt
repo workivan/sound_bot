@@ -13,7 +13,6 @@ certifi==2021.10.8
 cffi==1.15.0
 chardet==3.0.4
 charset-normalizer==2.0.12
-chrome-gnome-shell==0.0.0
 click==8.1.2
 click-didyoumean==0.3.0
 click-plugins==1.1.1
