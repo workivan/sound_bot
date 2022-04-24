@@ -1,5 +1,5 @@
 from aiogram import types
-from aiogram.dispatcher.handler import CancelHandler, current_handler
+from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
 from userBot import config
@@ -12,7 +12,7 @@ class AuthMiddleware(BaseMiddleware):
         self.prefix = key_prefix
         super(AuthMiddleware, self).__init__()
 
-    async def on_process_message(self, message: types.Message, data: dict):
+    async def on_process_message(self, message: types.Message):
         user = await ReferralService.get_or_create_user(message.from_user, message.text)
 
         if not user.is_connected:
