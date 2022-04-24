@@ -18,7 +18,7 @@ class Storage:
 
     async def get_user(self, chat_id):
         row = await self.connection.fetchrow(f"""select * from "user" where chat_id={chat_id}""")
-        return User(row) if row is not None else None
+        return User(row) if (row is not None) else None
 
     async def create_user(self, chat_id, username, deep_link=""):
         await self.connection.execute(f"""insert into "user" values({chat_id}, '{username}', '{deep_link}')""")
