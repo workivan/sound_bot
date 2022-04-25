@@ -279,6 +279,8 @@ async def process_successful_payment(message: types.Message):
         pack_name = pmnt.get("invoice_payload")
         pack = await config.storage.get_pack_by_name(pack_name)
         await config.storage.set_pay(message.chat.id, pack_name, pmnt.get("total_amount") / 100)
+        user = await config.storage.get_user(message.chat.id)
+
         await send_file(message.chat.id, pack)
         await config.bot.send_message(
             message.chat.id,
@@ -289,6 +291,7 @@ async def process_successful_payment(message: types.Message):
             msg.DELAY_MESSAGE_PACK
         )
         return
+
     user = await config.storage.get_user(message.chat.id)
 
     subscription = user.subscription_to if user.subscription_to and user.subscription_to > date.today() else date.today()
@@ -298,7 +301,7 @@ async def process_successful_payment(message: types.Message):
     )
     await config.bot.send_message(
         message.chat.id,
-        msg.PAYMENT_SUCCESFULL + f' {pmnt.get("invoice_payload")}'
+        msg.PAYMENT_SUCCESFULL
     )
 
 

@@ -17,7 +17,7 @@ class PacksMenuButtons:
     MORE = 'Следующие 25 паков'
     PACKS = 'Вернуться к списку паков'
     FILTRED = 'Показать новые паки'
-    BUY = 'Заплатить за пак'
+    BUY = 'Оплатить пак'
 
 
 class SoundsMenuButtons:
