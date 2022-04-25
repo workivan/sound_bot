@@ -102,6 +102,7 @@ async def reply_for_packs(message, reply_text, state):
             message.chat.id,
             voice=open(ogg, 'rb')
         )
+
     pays = await config.storage.get_pay_by_user_and_product(message.chat.id, pack_name.strip())
     if pays is None:
         bought = False
@@ -119,7 +120,7 @@ async def reply_for_packs(message, reply_text, state):
         elif 'GENRES' in proxy and proxy['GENRES']:
             await config.bot.send_message(
                 message.chat.id,
-                msg.BUY_PACK,
+                msg.DOWNLOAD_PACK,
                 reply_markup=kb.PacksKeyboard.get_download_g(pack_name, 'genres', pack_with_id.genre)
             )
         else:
