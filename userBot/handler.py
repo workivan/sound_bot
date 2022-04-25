@@ -160,7 +160,7 @@ async def callback_handler_download(callback_query: types.CallbackQuery):
         )
         await config.bot.send_message(
             callback_query.message.chat.id,
-            'https://telegram.me/sound_market_echo_dev_bot'
+            'https://telegram.me/sok_cloudbot'
         )
         return
 
