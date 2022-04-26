@@ -79,7 +79,7 @@ async def reply_for_packs(message, reply_text, state):
         return
     pack_id = int(digits_from_user[0])
 
-    menu: List[str] = re.findall('\d+\)[a-z ]+', reply_text)
+    menu: List[str] = re.findall('\d+\)[a-zA-zА-я ]+', reply_text)
     if pack_id <= 0 or pack_id > parse_max_index(menu):
         return
 

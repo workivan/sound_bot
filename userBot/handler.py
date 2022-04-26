@@ -117,7 +117,7 @@ async def replies_handler(message: types.Message, state):
     replied_message_text = message.reply_to_message.text
     # ответ на паки
     if re.match('(\d+\))', replied_message_text):
-        await reply_for_packs(message, replied_message_text.lower(), state)
+        await reply_for_packs(message, replied_message_text, state)
     else:
         chat_id = message.chat.id
         sound = await config.storage.get_sound_by_name(replied_message_text)
