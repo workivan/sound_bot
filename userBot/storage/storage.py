@@ -78,7 +78,7 @@ class Storage:
 
     # genres
     async def get_packs_by_genre(self, genre):
-        rows = await self.connection.fetch(f"""select * from "pack" where genre='{genre}' and cost > 0 """)
+        rows = await self.connection.fetch(f"""select * from "pack" where genre='{genre}' and cost==0 """)
         return [Pack(row) for row in rows]
 
     async def get_pack_by_genre(self, pack_id, genre):
