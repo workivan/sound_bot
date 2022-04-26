@@ -34,7 +34,9 @@ def get_sound_type(file_name):
         return 'clap'
     if ('piano' or 'key') in file_name:
         return 'key'
-    return 'more'
+    if 'melody' in file_name:
+        return 'more melodies'
+    return 'more drums'
 
 
 def get_genre(file_name):
@@ -50,9 +52,7 @@ def get_genre(file_name):
         return 'pop'
     if ('dancehall' or 'afro') in file_name:
         return 'dancehall/afro'
-    if 'melody' in file_name:
-        return 'more melodies'
-    return 'more drums'
+    return 'more'
 
 
 def upload_sounds_from_pack(pack, cur):
