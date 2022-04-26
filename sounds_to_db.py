@@ -64,7 +64,7 @@ def upload_sounds_from_pack(pack, cur):
 
             sound_type = get_sound_type(file_name)
             cur.execute(f"""
-                insert into "sound"  values('{pack + '/' + file_name + '.wav'}','{file_name + '.wav'}', '{sound_type}')
+                insert into "sound"  values('{pack + '/' + file_name + '.wav'}','{file_name}', '{sound_type}')
             on conflict DO NOTHING  """)
 
 

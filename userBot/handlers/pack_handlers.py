@@ -91,16 +91,16 @@ async def reply_for_packs(message, reply_text, state):
     )
 
     ogg_files, temp_dir_files = Uploader.upload_sounds_from_pack(pack_with_id)
-    for ogg, name in ogg_files:
+    for path, name in ogg_files:
         async with state.proxy() as proxy:
-            if 'VIP' in proxy and not proxy['VIP']:
+            if 'VIP' not in proxy or not proxy['VIP']:
                 await config.bot.send_message(
                     message.chat.id,
                     name
                 )
         await config.bot.send_voice(
             message.chat.id,
-            voice=open(ogg, 'rb')
+            voice=open(path, 'rb')
         )
 
     pays = await config.storage.get_pay_by_user_and_product(message.chat.id, pack_name.strip())

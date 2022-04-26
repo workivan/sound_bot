@@ -4,8 +4,6 @@ import string
 
 from userBot import config
 
-import soundfile as sf
-
 
 class Uploader:
 
@@ -20,31 +18,11 @@ class Uploader:
         os.mkdir(temp_dir)
 
         ogg_files = []
-        for _, _, files in os.walk(pack.path):
+        for root, _, files in os.walk(pack.path):
             for file in files:
                 file_name = file.split(".")[0]
                 if file_name == '':
                     break
-
-                data, samplerate = sf.read(pack.path + "/" + file)
-                sf.write(temp_dir + "/" + file_name + '.ogg', data, samplerate)
-
-                ogg_files.append((temp_dir + "/" + file_name + '.ogg', file_name + '.wav'))
+                ogg_files.append((root + "/" + file_name + '.wav', file_name))
 
         return ogg_files, temp_dir
-
-    @staticmethod
-    def upload_sounds_by_path(sounds):
-        temp_dir = config.TMP_FILES_DIR + Uploader.get_random_dir_name()
-        os.mkdir(temp_dir)
-        for sound in sounds:
-            file_name = sound.name.split(".")[0]
-            if file_name == '':
-                break
-
-            data, samplerate = sf.read(sound.path)
-            sf.write(temp_dir + "/" + file_name + '.ogg', data, samplerate)
-
-            sound.ogg_path = temp_dir + "/" + file_name + '.ogg'
-
-        return sounds, temp_dir

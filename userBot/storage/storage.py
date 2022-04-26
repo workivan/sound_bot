@@ -66,7 +66,7 @@ class Storage:
 
     async def get_sound_by_name(self, name):
         row = await self.connection.fetchrow(f""" select * from "sound" where name='{name}'""")
-        return Sound(row)
+        return Sound(row) if row else None
 
     async def get_sounds_count_by_type(self, type_id):
         row = await self.connection.fetchrow(f"""select count(*) from "sound" where sound_type='{type_id}'""")

@@ -1,9 +1,6 @@
-import shutil
-
 from userBot import config
 from userBot.keyboards.keyboard import SoundsKeyboard
 from userBot.services.delay_service import send_file
-from userBot.services.upload_service import Uploader
 from userBot.services.utils_service import Utils
 from userBot.keyboards import message as msg
 
@@ -14,22 +11,20 @@ async def get_sound_by_type(message, fr=0, sound_type=None):
     sounds_count = await config.storage.get_sounds_count_by_type(type_id)
 
     if len(sounds) != 0:
-        ogg_files, tmp_dir = Uploader.upload_sounds_by_path(sounds)
 
-        for ogg in ogg_files:
+        for sound in sounds:
             try:
-                with open(ogg.ogg_path, 'rb') as doc:
-                    await config.bot.send_message(
-                        message.chat.id,
-                        ogg.name
-                    )
-                    await config.bot.send_voice(
-                        message.chat.id,
-                        voice=doc
-                    )
+                await config.bot.send_message(
+                    message.chat.id,
+                    sound.name
+                )
+                await config.bot.send_voice(
+                    message.chat.id,
+                    voice=open(sound.path, 'rb')
+                )
             except RuntimeError:
                 await get_sound_by_type(message, fr)
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+
         if sounds_count > config.QUERY_SOUNDS_LIMIT + fr:
             await config.bot.send_message(
                 message.chat.id,
@@ -44,10 +39,9 @@ async def get_sound_by_type(message, fr=0, sound_type=None):
         )
 
 
-async def reply_for_sounds(message, reply_text):
+async def reply_for_sounds(message, reply_text, sound):
     await config.bot.send_message(
         message.chat.id,
         msg.DELAY_MESSAGE_SOUND(reply_text)
     )
-    sound = await config.storage.get_sound_by_name(reply_text)
     await send_file(message.chat.id, sound)
