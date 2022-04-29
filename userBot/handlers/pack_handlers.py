@@ -1,8 +1,6 @@
 import re
 import shutil
 
-from typing import List
-
 from userBot import config
 from userBot.handlers.utils import parse_max_index, parse_name_fr_menu
 from userBot.keyboards import message as msg, keyboard as kb
@@ -74,42 +72,39 @@ async def pack_by_menu(message, fr=0):
 
 
 async def reply_for_packs(message, reply_text, state):
-    digits_from_user = re.findall(r'(\d+)', message.text)
+    digits_from_user = re.findall('\d+', message.text)
     if len(digits_from_user) == 0:
         return
-    pack_id = int(digits_from_user[0])
 
-    menu: List[str] = re.findall('\d+\)[a-zA-z ]+', reply_text)
+    pack_id = int(digits_from_user[0])
+    menu = re.findall('\d+\)[a-zA-z ]+', reply_text)
     if pack_id <= 0 or pack_id > parse_max_index(menu):
         return
 
     pack_name = parse_name_fr_menu(menu, pack_id)
     pack_with_id = await config.storage.get_pack_by_name(pack_name.strip())
+    async with state.proxy() as proxy:
+        if 'VIP' in proxy and proxy['VIP']:
+            send_message = 'Загружаем пак - ' + pack_name
+        else:
+            send_message = msg.DOWNLOAD_PACK_MESSAGE + pack_name
+
     await config.bot.send_message(
         message.chat.id,
-        msg.DOWNLOAD_PACK_MESSAGE + pack_name
+        send_message
     )
-
     ogg_files, temp_dir_files = Uploader.upload_sounds_from_pack(pack_with_id)
-    for path, name in ogg_files:
-        async with state.proxy() as proxy:
-            if 'VIP' not in proxy or not proxy['VIP']:
-                await config.bot.send_message(
-                    message.chat.id,
-                    name
-                )
-        await config.bot.send_voice(
+    for path, name in sorted(ogg_files):
+        await config.bot.send_audio(
             message.chat.id,
-            voice=open(path, 'rb')
+            audio=open(path, 'rb'),
+            protect_content=True,
         )
-
-    pays = await config.storage.get_pay_by_user_and_product(message.chat.id, pack_name.strip())
-    if pays is None:
-        bought = False
-    else:
-        bought = True
+    pays = await config.storage.get_pay_by_user_and_product(message.chat.id, pack_with_id.path)
+    bought = True if pays is not None else False
 
     shutil.rmtree(temp_dir_files, ignore_errors=True)
+
     async with state.proxy() as proxy:
         if 'VIP' in proxy and proxy['VIP']:
             await config.bot.send_message(

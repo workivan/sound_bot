@@ -68,4 +68,4 @@ class AccountButtons:
 
 
 class MoreSoundsButtons:
-    MORE = 'Загрузить еще 50 звуков'
+    MORE = 'Загрузить еще 10 звуков'

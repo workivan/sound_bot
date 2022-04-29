@@ -40,17 +40,17 @@ def get_sound_type(file_name):
 
 
 def get_genre(file_name):
-    if 'hip hop' in file_name:
+    if 'hip hop' in file_name or 'drill' in file_name or 'trap' in file_name:
         return 'hip-hop'
     if 'rnb' in file_name:
         return 'rnb'
     if 'rock' in file_name:
         return 'rock'
-    if ('house' or 'techno') in file_name:
+    if 'house' in file_name or 'techno' in file_name:
         return 'house/techno'
     if 'pop' in file_name:
         return 'pop'
-    if ('dancehall' or 'afro') in file_name:
+    if 'dancehall' in file_name or 'afro' in file_name:
         return 'dancehall/afro'
     return 'more'
 
@@ -62,9 +62,9 @@ def upload_sounds_from_pack(pack, cur):
             if file_name == '':
                 break
 
-            sound_type = get_sound_type(file_name)
+            sound_type = get_sound_type(file_name.lower())
             cur.execute(f"""
-                insert into "sound"  values('{pack + '/' + file_name + '.wav'}','{file_name}', '{sound_type}')
+                insert into "sound"  values('{pack + '/' + file_name + '.wav'}','{file_name + '.wav'}', '{sound_type}')
             on conflict DO NOTHING  """)
 
 

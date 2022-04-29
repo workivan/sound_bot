@@ -1,4 +1,6 @@
 import re
+from distutils.util import strtobool
+from typing import List
 
 from userBot import config
 from userBot.keyboards import button as bt
@@ -72,5 +74,25 @@ def parse_name_fr_menu(menu, pack_id):
         if int(args[0]) == pack_id:
             return args[1]
 
+
 def change_date_format(dt):
     return re.sub(r'(\d{4})-(\d{1,2})-(\d{1,2})', '\\3-\\2-\\1', str(dt))
+
+
+async def is_user_connected(user, chat_id, message):
+    if not user.is_connected:
+        await config.bot.send_message(
+            chat_id,
+            message,
+        )
+        await config.bot.send_message(
+            chat_id,
+            'https://telegram.me/sok_cloudbot'
+        )
+        return False
+    return True
+
+
+def get_data_from_cq(callback_query):
+    args: List[str] = callback_query.data.split(',')
+    return args[1].strip(), bool(strtobool(args[2])) if len(args) == 3 else False

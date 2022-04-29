@@ -1,7 +1,4 @@
-import datetime
 import re
-from datetime import date
-from distutils.util import strtobool
 
 from aiogram import types, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -12,7 +9,7 @@ from userBot.handlers.pack_handlers import pack_by_genre_handler, pack_by_menu, 
 from userBot.handlers.payment_handlers import Payments
 from userBot.handlers.sound_handlers import get_sound_by_type, reply_for_sounds
 from userBot.handlers.utils import send_message_to_u, lambda_for_packs_genres, lambda_for_sounds, to_sounds_filter, \
-    lambda_sound
+    lambda_sound, get_data_from_cq, is_user_connected
 from userBot.keyboards import message as msg, button as bt, keyboard as kb
 from userBot.keyboards.callback import PacksCallback, SoundCallback, PaymentCallback
 from userBot.middleware import AuthMiddleware
@@ -115,67 +112,21 @@ async def replies_handler(message: types.Message, state):
         return
 
     replied_message_text = message.reply_to_message.text
-    # ответ на паки
-    if re.match('(\d+\))', replied_message_text):
-        await reply_for_packs(message, replied_message_text, state)
+    if replied_message_text is not None:
+        if re.search('(\d+\))', replied_message_text):
+            await reply_for_packs(message, replied_message_text, state)
     else:
-        chat_id = message.chat.id
-        sound = await config.storage.get_sound_by_name(replied_message_text)
-        if sound:
-            user = await config.storage.get_user(chat_id)
-            if user.subscription_to is not None and user.subscription_to > date.today():
-                if not user.is_connected:
-                    await config.bot.send_message(
-                        message.chat.id,
-                        msg.NOT_SUB + '\n' + '',
-                    )
-                    await config.bot.send_message(
-                        message.chat.id,
-                        'https://telegram.me/sok_cloudbot'
-                    )
-                    return
-                await reply_for_sounds(message, replied_message_text, sound)
-                return
-            await config.bot.send_message(
-                chat_id,
-                msg.NEED_PAYMENT
-            )
+        await reply_for_sounds(message, message.reply_to_message.audio)
 
 
 # callbacks handlers
 @dp.callback_query_handler(lambda cq: cq.data and cq.data.startswith(PacksCallback.DOWNLOAD))
 async def callback_handler_download(callback_query: types.CallbackQuery):
     chat_id = callback_query.from_user.id
-
-    user = await config.storage.get_user(chat_id)
-
-    args = callback_query.data.split(',')
-    bought = False
-    if len(args) == 3:
-        bought = bool(strtobool(args[2]))
+    pack_name, bought = get_data_from_cq(callback_query)
     user = await config.storage.get_user(chat_id)
 
     if bought:
-        pack_name = args[1].strip()
-        pack = await config.storage.get_pack_by_name(pack_name)
-        await send_file(chat_id, pack)
-        await config.bot.send_message(
-            chat_id,
-            msg.DELAY_MESSAGE_PACK
-        )
-        return
-    if user.subscription_to and user.subscription_to > date.today():
-        pack_name = args[1].strip()
-        if not user.is_connected:
-            await config.bot.send_message(
-                callback_query.message.chat.id,
-                msg.NOT_SUB + '\n' + '',
-            )
-            await config.bot.send_message(
-                callback_query.message.chat.id,
-                'https://telegram.me/sok_cloudbot'
-            )
-            return
         pack = await config.storage.get_pack_by_name(pack_name)
         await send_file(chat_id, pack)
         await config.bot.send_message(
@@ -184,11 +135,20 @@ async def callback_handler_download(callback_query: types.CallbackQuery):
         )
         return
 
+    sub = await Payments.check_is_sub(user, chat_id, msg.NEED_PAYMENT)
+    if not sub:
+        return
+
+    connected = await is_user_connected(user, chat_id, msg.NOT_SUB + '\n' + '')
+    if not connected:
+        return
+
+    pack = await config.storage.get_pack_by_name(pack_name)
+    await send_file(chat_id, pack)
     await config.bot.send_message(
         chat_id,
-        msg.NEED_PAYMENT
+        msg.DELAY_MESSAGE_PACK
     )
-    return
 
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data.startswith(PacksCallback.BUY))
@@ -263,67 +223,17 @@ async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery)
 
 @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
 async def process_successful_payment(message: types.Message):
+    global period
     pmnt = message.successful_payment.to_python()
     user = await config.storage.get_user(message.chat.id)
     if pmnt.get("invoice_payload") == PaymentCallback.YEAR:
-        period = 360
+        await Payments.pay_for_sub(user, message, 360)
     elif pmnt.get("invoice_payload") == PaymentCallback.TH_MONTH:
-        period = 90
+        await Payments.pay_for_sub(user, message, 90)
     elif pmnt.get("invoice_payload") == PaymentCallback.MONTH:
-        period = 30
+        await Payments.pay_for_sub(user, message, 30)
     else:
-        pack_name = pmnt.get("invoice_payload")
-        pack = await config.storage.get_pack_by_name(pack_name)
-        await config.storage.set_pay(message.chat.id, pack.path, pmnt.get("total_amount") / 100)
-
-        if not user.is_connected:
-            await config.bot.send_message(
-                message.chat.id,
-                msg.NOT_SUB_BUY_PACK,
-            )
-            await config.bot.send_message(
-                message.chat.id,
-                'https://telegram.me/sok_cloudbot'
-            )
-            return
-
-        await send_file(message.chat.id, pack)
-        await config.storage.update_pays(message.chat.id, pack.path)
-        await config.bot.send_message(
-            message.chat.id,
-            msg.PAYMENT_PACK_SUCCESS
-        )
-        await config.bot.send_message(
-            message.chat.id,
-            msg.DELAY_MESSAGE_PACK
-        )
-        return
-
-    subscription = user.subscription_to if user.subscription_to and user.subscription_to > date.today() else date.today()
-    await config.storage.update_sub(
-        message.chat.id,
-        subscription + datetime.timedelta(days=period)
-    )
-    await config.bot.send_message(
-        message.chat.id,
-        msg.PAYMENT_SUCCESFULL
-    )
-    if not user.is_connected:
-        await config.bot.send_message(
-            message.chat.id,
-            msg.NOT_SUB,
-        )
-        await config.bot.send_message(
-            message.chat.id,
-            'https://telegram.me/sok_cloudbot'
-        )
-        return
-
-
-# TODO genres by 25, + get_list again
-@dp.callback_query_handler(lambda cq: cq.data and cq.data == PacksCallback.GENRES)
-async def callback_handler_genres(callback_query: types.CallbackQuery):
-    return
+        return await Payments.pay_for_pack(pmnt, message, user)
 
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data.startswith(SoundCallback.FIFTY))

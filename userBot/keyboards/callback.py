@@ -25,7 +25,7 @@ class PacksCallback:
 
 
 class SoundCallback:
-    FIFTY = 'fifty'
+    FIFTY = 'more_ten'
 
 
 class PaymentCallback:

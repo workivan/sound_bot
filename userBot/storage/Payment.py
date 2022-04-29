@@ -5,6 +5,6 @@ class Payment(object):
 
     def __init__(self, row):
         if row:
-            self.poduct = row['product']
+            self.poduct = row['product'].strip()
             self.cost = row['cost']
             self.chat_id = row['chat_id']
