@@ -13,7 +13,7 @@ async def get_sound_by_type(message, fr=0, sound_type=None):
     sounds_count = await config.storage.get_sounds_count_by_type(type_id)
 
     if len(sounds) != 0:
-        for sound in sounds:
+        for sound in sounds[:-1]:
             await config.bot.send_audio(
                 message.chat.id,
                 audio=open(sound.path, 'rb'),
@@ -21,12 +21,16 @@ async def get_sound_by_type(message, fr=0, sound_type=None):
             )
 
         if sounds_count > config.QUERY_SOUNDS_LIMIT + fr:
-            await config.bot.send_message(
+            await config.bot.send_audio(
                 message.chat.id,
-                msg.SOUNDS_LIMIT,
+                audio=open(sounds[-1].path, 'rb'),
                 reply_markup=SoundsKeyboard.get_more(fr + config.QUERY_SOUNDS_LIMIT, type_id)
             )
-            return
+        else:
+            await config.bot.send_audio(
+                message.chat.id,
+                audio=open(sounds[-1].path, 'rb')
+            )
     else:
         await config.bot.send_message(
             message.chat.id,

@@ -13,7 +13,7 @@ class Payments:
     @staticmethod
     def get_subscribe_month():
         return [
-            types.LabeledPrice(ONE_MONTH_LABEL, amount=1490),
+            types.LabeledPrice(ONE_MONTH_LABEL, amount=14900),
         ]
 
     @staticmethod
@@ -39,9 +39,9 @@ class Payments:
         if user.subscription_to is not None and user.subscription_to > datetime.date.today():
             sub = change_date_format(str(user.subscription_to))
             return f"Текущая подписка действует до {sub.replace('-', '.')}." \
-                   f" Мы напомним вам об оплате за несколько дней до истечения срока подписки."
+                   f" Мы напомним вам об оплате за несколько дней до истечения срока подписки.", True
         else:
-            return 'У вас сейчас нет подписки на наш сервис'
+            return 'У вас сейчас нет подписки на наш сервис', False
 
     @staticmethod
     async def check_is_sub(user, chat_id, message):

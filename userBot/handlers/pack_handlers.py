@@ -79,15 +79,18 @@ async def reply_for_packs(message, reply_text, state):
     pack_id = int(digits_from_user[0])
     menu = re.findall('\d+\)[a-zA-z ]+', reply_text)
     if pack_id <= 0 or pack_id > parse_max_index(menu):
+        await config.bot.send_message(
+            message.chat.id,
+            msg.OUTOFBOUNDARY
+        )
         return
 
     pack_name = parse_name_fr_menu(menu, pack_id)
     pack_with_id = await config.storage.get_pack_by_name(pack_name.strip())
-    async with state.proxy() as proxy:
-        if 'VIP' in proxy and proxy['VIP']:
-            send_message = 'Загружаем пак - ' + pack_name
-        else:
-            send_message = msg.DOWNLOAD_PACK_MESSAGE + pack_name
+    if pack_with_id.cost > 0:
+        send_message = 'Загружаем пак - ' + pack_name
+    else:
+        send_message = msg.DOWNLOAD_PACK_MESSAGE + pack_name
 
     await config.bot.send_message(
         message.chat.id,
@@ -106,7 +109,7 @@ async def reply_for_packs(message, reply_text, state):
     shutil.rmtree(temp_dir_files, ignore_errors=True)
 
     async with state.proxy() as proxy:
-        if 'VIP' in proxy and proxy['VIP']:
+        if pack_with_id.cost > 0:
             await config.bot.send_message(
                 message.chat.id,
                 msg.BUY_PACK,

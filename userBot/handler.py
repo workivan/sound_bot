@@ -82,11 +82,18 @@ async def get_sounds(message: types.Message):
 @dp.message_handler(lambda message: message.text and message.text == bt.AccountButtons.ACC)
 async def get_subscribes(message):
     user = await config.storage.get_user(message.chat.id)
-    await config.bot.send_message(
-        message.chat.id,
-        f'\n{Payments.current_sub_info(user)}' + msg.PAYMENT_MESSAGE,
-        reply_markup=kb.AccountMenu.get_pay()
-    )
+    message_to, sub = Payments.current_sub_info(user)
+    if not sub:
+        await config.bot.send_message(
+            message.chat.id,
+            f'\n{message_to}' + msg.PAYMENT_MESSAGE,
+            reply_markup=kb.AccountMenu.get_pay()
+        )
+    else:
+        await config.bot.send_message(
+            message.chat.id,
+            f'\n{message_to}',
+        )
 
 
 # exclusive content
