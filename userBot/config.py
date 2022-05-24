@@ -38,4 +38,4 @@ QUERY_SOUNDS_LIMIT = 10
 
 TMP_FILES_DIR = ROOT_DIR + "/upload/"
 
-TELEGRAM_REF = 'https://telegram.me/?start='
+TELEGRAM_REF = 'https://telegram.me/sok_soundbot?start='
