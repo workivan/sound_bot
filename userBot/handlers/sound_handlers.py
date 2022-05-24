@@ -43,12 +43,16 @@ async def reply_for_sounds(message, audio):
     sound = await config.storage.get_sound_by_name(audio.file_name)
 
     if sound:
+        if sound.cost != 0:
+            await config.bot.send_message(chat_id, msg.COST_SOUND)
+            return
         user = await config.storage.get_user(chat_id)
         sub = await Payments.check_is_sub(user, chat_id, msg.NEED_PAYMENT)
         if not sub:
             return
 
         connected = await is_user_connected(user, chat_id, msg.NOT_SUB)
+        await config.storage.set_pay(message.chat.id, sound.path, 0)
         if not connected:
             return
 

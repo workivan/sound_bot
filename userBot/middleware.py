@@ -14,4 +14,3 @@ class AuthMiddleware(BaseMiddleware):
 
     async def on_process_message(self, message: types.Message, data: dict):
         await ReferralService.get_or_create_user(message.from_user, message.text)
-        pass

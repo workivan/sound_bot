@@ -9,7 +9,7 @@ from userBot.storage.storage import Storage
 load_dotenv()
 
 API_TOKEN_USER_BOT = os.getenv("USER_BOT_TOKEN")
-API_PAY_TOKEN='381764678:TEST:36467'
+API_PAY_TOKEN = os.getenv('PAY')
 
 SHOP_ID = 506751
 SHOP_ARTICLE_ID = 538350
@@ -32,7 +32,7 @@ bot = Bot(token=API_TOKEN_USER_BOT)
 
 storage = Storage()
 
-QUERY_LIMIT = 25
+QUERY_LIMIT = 3
 QUERY_RATE_LIMIT = 10
 QUERY_SOUNDS_LIMIT = 10
 

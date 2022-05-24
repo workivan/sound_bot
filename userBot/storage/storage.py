@@ -16,6 +16,10 @@ class Storage:
         await self.connection.execute(
             f"""update "user" set subscription_to='{to}' where chat_id={chat_id}""")
 
+    async def update_pays(self, chat_id, product):
+        await self.connection.execute(
+            f"""update "payment" set send=true where chat_id={chat_id} and product='{product}'""")
+
     async def get_user(self, chat_id):
         row = await self.connection.fetchrow(f"""select * from "user" where chat_id={chat_id}""")
         return User(row) if (row is not None) else None
@@ -60,7 +64,7 @@ class Storage:
     # звуки
     async def get_sounds_by_type(self, sound_type, limit, fr=0):
         rows = await self.connection.fetch(
-            f"""select * from "sound" where sound_type='{sound_type}' offset {fr} limit {limit}""")
+            f"""select * from "sound" where sound_type='{sound_type}' and cost=false offset {fr} limit {limit}""")
         return [Sound(row) for row in rows]
 
     async def get_sound_by_name(self, name):
@@ -68,7 +72,8 @@ class Storage:
         return Sound(row) if row else None
 
     async def get_sounds_count_by_type(self, type_id):
-        row = await self.connection.fetchrow(f"""select count(*) from "sound" where sound_type='{type_id}'""")
+        row = await self.connection.fetchrow(
+            f"""select count(*) from "sound" where sound_type='{type_id}' and cost=false """)
         return row["count"]
 
     # sub
@@ -76,9 +81,15 @@ class Storage:
         row = await self.connection.fetchrow(f"""select * from""")
 
     # genres
-    async def get_packs_by_genre(self, genre):
-        rows = await self.connection.fetch(f"""select * from "pack" where genre='{genre}' and cost=0""")
+    async def get_packs_by_genre(self, genre, limit, fr=0):
+        rows = await self.connection.fetch(
+            f"""select * from "pack" where genre='{genre}' and cost=0 offset {fr} limit {limit}""")
         return [Pack(row) for row in rows]
+
+    async def get_packs_by_genre_count(self, genre):
+        row = await self.connection.fetchrow(
+            f"""select count(*) from "pack" where genre='{genre}' and cost=0""")
+        return row["count"]
 
     async def get_pack_by_genre(self, pack_id, genre):
         row = await self.connection.fetchrow(

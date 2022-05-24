@@ -45,19 +45,26 @@ class AccountMenu:
 
 class PacksKeyboard:
     @staticmethod
+    def get_next_genres_pack(next_packs=None, genre=None):
+        ik = InlineKeyboardMarkup(resize_keyboard=True)
+        if next_packs:
+            but = PacksMenuButtons.MORE if next_packs != -1 else PacksMenuButtons.FIRST
+            ik.add(
+                InlineKeyboardButton(
+                    but,
+                    callback_data=PacksCallback.MORE_PACKS(next_packs if next_packs >= 0 else 0, genre)))
+
+        return ik
+
+    @staticmethod
     def get_ten(next_packs=None):
         ik = InlineKeyboardMarkup(resize_keyboard=True)
         ik.add(InlineKeyboardButton(PacksMenuButtons.TEN, callback_data=PacksCallback.TEN))
         if next_packs:
-            ik.add(InlineKeyboardButton(PacksMenuButtons.MORE, callback_data=PacksCallback.MORE_PACKS(next_packs)))
+            but = PacksMenuButtons.MORE if next_packs != -1 else PacksMenuButtons.FIRST
+            ik.add(
+                InlineKeyboardButton(but, callback_data=PacksCallback.MORE_PACKS(next_packs if next_packs >= 0 else 0)))
         return ik
-
-    def get_genres(next_packs=None):
-        if next_packs:
-            ik = InlineKeyboardMarkup(resize_keyboard=True)
-            ik.add(InlineKeyboardButton(PacksMenuButtons.MORE, callback_data=PacksCallback.MORE_PACKS(next_packs)))
-            return ik
-        return None
 
     @staticmethod
     def get_filtred():

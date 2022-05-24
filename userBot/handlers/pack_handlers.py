@@ -7,14 +7,21 @@ from userBot.keyboards import message as msg, keyboard as kb
 from userBot.services.upload_service import Uploader
 
 
-async def pack_by_genre_handler(message, state, genre=None):
-    packs = await config.storage.get_packs_by_genre(genre if genre else message.text.lower())
+async def pack_by_genre_handler(message, state, genre=None, fr=0):
+    packs = await config.storage.get_packs_by_genre(genre if genre else message.text.lower(), config.QUERY_LIMIT)
+    packs_count = await config.storage.get_packs_by_genre_count(genre if genre else message.text.lower())
     if len(packs) > 0:
         message_packs = '\n'.join([f'{i + 1}) {pack.name}' for i, pack in enumerate(packs)])
+
+        board = kb.PacksKeyboard.get_next_genres_pack(
+            fr + config.QUERY_LIMIT if fr + config.QUERY_LIMIT < packs_count else None,
+            genre if genre else message.text.lower()
+        )
 
         await config.bot.send_message(
             message.chat.id,
             message_packs,
+            reply_markup=board
         )
 
         async with state.proxy() as proxy:
@@ -62,12 +69,14 @@ async def pack_by_menu(message, fr=0):
         msg.WELCOME_PACKS_MESSAGE,
     )
 
+    board = kb.PacksKeyboard.get_ten(
+        fr + config.QUERY_LIMIT if fr + config.QUERY_LIMIT < packs_count else None
+    )
+
     await config.bot.send_message(
         message.chat.id,
         message_packs,
-        reply_markup=kb.PacksKeyboard.get_ten(
-            fr + config.QUERY_LIMIT if fr + config.QUERY_LIMIT < packs_count else None
-        )
+        reply_markup=board
     )
 
 
@@ -112,7 +121,7 @@ async def reply_for_packs(message, reply_text, state):
         if pack_with_id.cost > 0:
             await config.bot.send_message(
                 message.chat.id,
-                msg.BUY_PACK,
+                msg.BUY_PACK if not bought else msg.ALREADY_BOUGHT,
                 reply_markup=kb.PacksKeyboard.get_buy(pack_name, bought)
             )
         elif 'GENRES' in proxy and proxy['GENRES']:

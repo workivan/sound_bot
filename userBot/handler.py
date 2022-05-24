@@ -134,6 +134,10 @@ async def callback_handler_download(callback_query: types.CallbackQuery):
     user = await config.storage.get_user(chat_id)
 
     if bought:
+        connected = await is_user_connected(user, chat_id, msg.NOT_SUB + '\n' + '')
+        if not connected:
+            return
+
         pack = await config.storage.get_pack_by_name(pack_name)
         await send_file(chat_id, pack)
         await config.bot.send_message(
@@ -151,6 +155,8 @@ async def callback_handler_download(callback_query: types.CallbackQuery):
         return
 
     pack = await config.storage.get_pack_by_name(pack_name)
+    await config.storage.set_pay(callback_query.message.chat.id, pack.path, 0)
+
     await send_file(chat_id, pack)
     await config.bot.send_message(
         chat_id,
@@ -230,7 +236,6 @@ async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery)
 
 @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
 async def process_successful_payment(message: types.Message):
-    global period
     pmnt = message.successful_payment.to_python()
     user = await config.storage.get_user(message.chat.id)
     if pmnt.get("invoice_payload") == PaymentCallback.YEAR:
@@ -246,7 +251,8 @@ async def process_successful_payment(message: types.Message):
 @dp.callback_query_handler(lambda cq: cq.data and cq.data.startswith(SoundCallback.FIFTY))
 async def callback_handler_more_sounds(callback_query: types.CallbackQuery):
     cq_args = callback_query.data.split(',')
-    await config.bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
+    await config.bot.edit_message_reply_markup(callback_query.message.chat.id, callback_query.message.message_id,
+                                               reply_markup=None)
     await get_sound_by_type(callback_query.message, int(cq_args[1]), cq_args[2])
 
 
@@ -265,13 +271,32 @@ async def callback_handler_packs_again(callback_query: types.CallbackQuery, stat
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data.startswith(PacksCallback.MORE))
 async def callback_handler_more_packs(callback_query: types.CallbackQuery):
-    fr = int(callback_query.data.split(",")[1])
-    packs = await config.storage.get_packs(config.QUERY_LIMIT, fr)
-    packs_count = await config.storage.get_packs_count()
+    data = callback_query.data.split(",")
+    if len(data) != 3:
+        fr = int(data[1])
+        packs = await config.storage.get_packs(config.QUERY_LIMIT, fr)
+        packs_count = await config.storage.get_packs_count()
+
+        if fr + config.QUERY_LIMIT < packs_count:
+            board = kb.PacksKeyboard.get_ten(fr + config.QUERY_LIMIT)
+        else:
+            board = kb.PacksKeyboard.get_ten(-1)
+
+    else:
+        fr = int(data[1])
+        packs = await config.storage.get_packs_by_genre(data[2].strip(), config.QUERY_LIMIT, fr)
+        packs_count = await config.storage.get_packs_by_genre_count(data[2].strip())
+
+        if fr + config.QUERY_LIMIT < packs_count:
+            board = kb.PacksKeyboard.get_next_genres_pack(
+                fr + config.QUERY_LIMIT if fr + config.QUERY_LIMIT < packs_count else None,
+                data[2].strip()
+            )
+        else:
+            board = kb.PacksKeyboard.get_next_genres_pack(-1, data[2].strip())
+
     message_packs = '\n'.join([f'{fr + i + 1}) {pack.name}' for i, pack in enumerate(packs)])
-    await update_packs_message(callback_query, message_packs, kb.PacksKeyboard.get_ten(
-        fr + config.QUERY_LIMIT if fr + config.QUERY_LIMIT < packs_count else None
-    ))
+    await update_packs_message(callback_query, message_packs, board)
 
 
 @dp.callback_query_handler(lambda cq: cq.data and cq.data == PacksCallback.FILTRED)

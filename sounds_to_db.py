@@ -1,4 +1,6 @@
 import os
+import re
+
 import psycopg2
 
 from global_config import ROOT_DIR
@@ -57,6 +59,7 @@ def get_genre(file_name):
 
 def upload_sounds_from_pack(pack, cur):
     for _, _, files in os.walk(pack):
+        cost = True if re.search("exclusive", pack) else False
         for file in files:
             file_name = file.split(".")[0]
             if file_name == '':
@@ -64,14 +67,16 @@ def upload_sounds_from_pack(pack, cur):
 
             sound_type = get_sound_type(file_name.lower())
             cur.execute(f"""
-                insert into "sound"  values('{pack + '/' + file_name + '.wav'}','{file_name + '.wav'}', '{sound_type}')
+                insert into "sound"  values('{pack + '/' + file_name + '.wav'}','{file_name + '.wav'}', '{sound_type}', {cost})
             on conflict DO NOTHING  """)
 
 
 def upload_pack(pack, genre, pack_name, cur):
-    cur.execute(f"""
-        insert into "pack"  values('{pack}','{genre}', '{pack_name}', 0)on conflict DO NOTHING 
-    """)
+    index_of_ex = re.search("exclusive", pack_name)
+    new_pack_name = pack_name[:index_of_ex.regs[0][0]] if index_of_ex else pack_name
+    cur.execute(
+        f"""insert into "pack"  values('{pack}','{genre}', '{new_pack_name}', 0)on conflict DO NOTHING
+        """)
 
 
 if __name__ == "__main__":

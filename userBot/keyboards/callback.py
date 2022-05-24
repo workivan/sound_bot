@@ -8,8 +8,10 @@ class PacksCallback:
     GENRES = 'genres'
 
     @staticmethod
-    def MORE_PACKS(fr):
-        return 'more' + f',{fr}'
+    def MORE_PACKS(fr, genre=None):
+        if genre is None:
+            return 'more' + f',{fr}'
+        return 'more' + f', {fr}, {genre}'
 
     @staticmethod
     def TEN_PACKS(message_id):
