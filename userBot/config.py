@@ -32,7 +32,7 @@ bot = Bot(token=API_TOKEN_USER_BOT)
 
 storage = Storage()
 
-QUERY_LIMIT = 3
+QUERY_LIMIT = 25
 QUERY_RATE_LIMIT = 10
 QUERY_SOUNDS_LIMIT = 10
 
